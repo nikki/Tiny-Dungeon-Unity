@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Tile : MonoBehaviour {
@@ -9,6 +10,17 @@ public class Tile : MonoBehaviour {
     public int x;
     public int y;
 
+    public enum SpellType {
+        Earth,
+        Water,
+        Air,
+        Fire
+    }
+    public SpellType type;
+    public bool selected;
+
+    RectTransform rect;
+
     public AudioClip click;
     AudioSource audio;
 
@@ -17,16 +29,17 @@ public class Tile : MonoBehaviour {
         GameObject tile = Instantiate(prefab) as GameObject;
         tile.transform.parent = parent.transform;
 
-
-        // image
-        // Sprite sprite = (Sprite)props["sprite"];
-
-        // position and dimensions
-        // if (sprite) {
-        //     rect.GetComponent<Image>().sprite = sprite;
+        // local scope reference to script component on tile
+        Tile _tile = tile.GetComponent<Tile>();
 
         // set position
-        tile.GetComponent<Tile>().SetPosition(x, y);
+        _tile.SetPosition(x, y);
+
+        // set spell type
+        _tile.SetType();
+
+        // set sprite
+        _tile.SetSprite();
 
         // return tile game object
         return tile;
@@ -38,15 +51,31 @@ public class Tile : MonoBehaviour {
         this.x = x;
         this.y = y;
 
-        // get recttransform
-        RectTransform rect = GetComponent<RectTransform>();
-
         // set onscreen position
         rect.anchoredPosition = new Vector2((float)x * 128, (float)-y * 128);
         rect.localScale = Vector3.one;
     }
 
+    public void SetType() {
+        type = (SpellType)Random.Range(0, System.Enum.GetValues(typeof(SpellType)).Length);
+    }
+
+    public void SetSprite() {
+        rect.GetComponent<Image>().sprite = Resources.Load<Sprite>("Textures/t_" + type.ToString().ToLower());
+    }
+
+    public void SetSelected(bool select) {
+        if (select) {
+            selected = true;
+            rect.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+        }
+    }
+
     public void Awake() {
+        // set reference to recttransform
+        rect = GetComponent<RectTransform>();
+
+        // set ref to audio component
         audio = GetComponent<AudioSource>();
     }
 }
