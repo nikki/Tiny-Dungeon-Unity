@@ -10,6 +10,7 @@ public class Game : MonoBehaviour {
 
     static GameObject currentTile;
     static List<GameObject> chain = new List<GameObject>();
+    static List<GameObject> previousTiles = new List<GameObject>();
 
     public void First() {
         GameObject tile = Board.GetTileAtScreenPosition(Input.mousePosition);
@@ -23,8 +24,6 @@ public class Game : MonoBehaviour {
 
     public void Next() {
         GameObject tile = Board.GetTileAtScreenPosition(Input.mousePosition);
-        GameObject previousTile;
-        int undo;
 
         // tile is not same tile and is of correct type
         if (tile && tile != currentTile) {
@@ -37,49 +36,32 @@ public class Game : MonoBehaviour {
                 // is this move a valid move?
                 if (Board.ValidMove(new Vector2(_currentTile.x, _currentTile.y), new Vector2(_tile.x, _tile.y))) {
 
-                    // this isn't a previous tile?
-                    // previousTile = chain.fil
+                    // is this a previous tile?
+                    if (chain.Contains(tile)) {
+                        // undo chain if previous tile
+                        int undo = chain.IndexOf(tile);
 
+                        // "splice" but not
+                        previousTiles = chain.GetRange(undo, chain.Count - undo);
+                        chain.RemoveRange(undo, chain.Count - undo);
 
-
-                    _tile.SetSelected(true);
-                    chain.Add(tile);
-                    currentTile = tile;
+                        // deselect tile
+                        foreach(GameObject previousTile in previousTiles) {
+                            if (previousTile != tile) {
+                                previousTile.GetComponent<Tile>().SetSelected(false);
+                            }
+                        }
+                    } else {
+                        _tile.SetSelected(true);
+                        chain.Add(tile);
+                        currentTile = tile;
+                    }
                 }
             }
-
-
         }
-
-
-
-        //     // is this move a valid move?
-        //     if (board.validMove(this.currentTile, tile)) {
-
-        //       // this isn't a previous tile?
-        //       previousTile = this.chain.filter(function(prev) {
-        //         return tile === prev;
-        //       });
-
-        //       // undo chain
-        //       if (previousTile.length) {
-        //         undo = this.chain.indexOf(previousTile[0]);
-        //         previousTile = this.chain.splice(undo, this.chain.length - undo);
-        //         previousTile.forEach(function(tile) {
-        //           tile.selected = false;
-        //         });
-        //       }
-
-        //       tile.selected = true;
-        //       this.chain.push(tile);
-        //       this.currentTile = tile;
-        //     }
-
-
     }
 
     public void Last() {
-
         // 2+ tiles in chain
         if (chain.Count > 1) {
 
@@ -91,7 +73,6 @@ public class Game : MonoBehaviour {
 
             //   // cast the spell
             //   dungeon.castSpell(this.chain.length);
-            //
 
             //   // currently fighting e?
             //   if (TM.wait) {
@@ -102,12 +83,11 @@ public class Game : MonoBehaviour {
             //     dungeon.gainTime(this.chain.length / 2); // 0.5 secs for each tile matched
             //   }
 
-            //   // add more tiles to board
-            //   board.rMT();
-            // } else {
-            //   // deselect first tile
-            //   if (this.chain[0]) this.chain[0].selected = false;
-
+            // add more tiles to board
+            Board.ReplaceMatchedTiles();
+        } else {
+            // deselect first tile
+            if (chain[0]) chain[0].GetComponent<Tile>().SetSelected(false);
         }
 
         // reset chain

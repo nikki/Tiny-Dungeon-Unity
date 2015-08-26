@@ -84,7 +84,7 @@ public class Board : MonoBehaviour {
         return prev;
     }
 
-    void ReplaceMatchedTiles() {
+    public static void ReplaceMatchedTiles() {
       // !!! TODO
 
       // var x, y, cell, tile, pos, sY = [];

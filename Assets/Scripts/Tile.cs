@@ -65,10 +65,8 @@ public class Tile : MonoBehaviour {
     }
 
     public void SetSelected(bool select) {
-        if (select) {
-            selected = true;
-            rect.GetComponent<Image>().color = new Color32(255, 255, 255, 255);
-        }
+        selected = select;
+        rect.GetComponent<Image>().color = selected ? new Color32(255, 255, 255, 255) : new Color32(150, 150, 150, 200);
     }
 
     public void Awake() {
