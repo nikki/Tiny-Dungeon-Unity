@@ -38,6 +38,11 @@ public class Game : MonoBehaviour {
 
                     // is this a previous tile?
                     if (chain.Contains(tile)) {
+                        // made a square!
+                        if (chain.Count > 3 && tile == chain[0]) {
+                            Debug.Log("ZOMG SQUARE!");
+                        }
+
                         // undo chain if previous tile
                         int undo = chain.IndexOf(tile);
 
@@ -51,11 +56,11 @@ public class Game : MonoBehaviour {
                                 previousTile.GetComponent<Tile>().SetSelected(false);
                             }
                         }
-                    } else {
-                        _tile.SetSelected(true);
-                        chain.Add(tile);
-                        currentTile = tile;
                     }
+
+                    _tile.SetSelected(true);
+                    chain.Add(tile);
+                    currentTile = tile;
                 }
             }
         }

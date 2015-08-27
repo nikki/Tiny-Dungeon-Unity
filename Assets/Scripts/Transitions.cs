@@ -16,17 +16,6 @@ public class Transitions : MonoBehaviour {
     }
     public Direction slideDirection;
 
-	void Start () {
-        // init dotween
-        DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
-
-        // show/hide panel on start
-        if (!isActive) {
-            TogglePanel(gameObject, false);
-            ShowPanel(gameObject, false);
-        }
-	}
-
     void TogglePanel(GameObject panel, bool enable) {
         CanvasGroup group = panel.GetComponent<CanvasGroup>();
         group.interactable = enable ? true : false;
@@ -91,5 +80,13 @@ public class Transitions : MonoBehaviour {
         // show/hide
         ShowPanel(gameObject, false);
         ShowPanel(to, true);
+    }
+
+    void Start () {
+        // show/hide panel on start
+        if (!isActive) {
+            TogglePanel(gameObject, false);
+            ShowPanel(gameObject, false);
+        }
     }
 }

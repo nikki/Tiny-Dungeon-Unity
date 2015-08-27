@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Board : MonoBehaviour {
 
+    public static GameObject board;
     public static int offsetY;
 
     public static int size = 5;
@@ -12,7 +13,7 @@ public class Board : MonoBehaviour {
 
     public static int tileSize = 128;
 
-    void CreateGrid() {
+    public static void CreateGrid() {
         grid = new GameObject[size, size];
 
         for (int x = 0; x < size; x++) {
@@ -22,8 +23,8 @@ public class Board : MonoBehaviour {
         }
     }
 
-    void CreateTileAt(int x, int y) {
-        grid[x, y] = Tile.Create(x, y, gameObject);
+    public static void CreateTileAt(int x, int y, int? tweenY = null) {
+        grid[x, y] = Tile.Create(board, x, y, tweenY);
         numTiles += 1;
     }
 
@@ -39,38 +40,43 @@ public class Board : MonoBehaviour {
         Vector3 scaledPos = Vector3.Scale(mousePos, new Vector3(Game.scale, Game.scale, 0));
         scaledPos.y += offsetY; // add board y offset (already scaled)
 
-        // MoveTileTo( GetTileAtCell(new Vector2((int)(scaledPos.x / tileSize), (int)(scaledPos.y / tileSize))), new Vector2(0, 0));
-
         if (PositionInBounds(scaledPos)) { // round floats down
             return GetTileAtCell(new Vector2((int)(scaledPos.x / tileSize), (int)(scaledPos.y / tileSize)));
         }
-
         return null;
     }
 
     public static void MoveTileTo(GameObject tile, Vector2 cell) {
-        grid[(int)cell.x, (int)cell.y] = null;
-        tile.GetComponent<Tile>().SetPosition((int)cell.x, (int)cell.y);
+        Tile _tile = tile.GetComponent<Tile>();
+        int cx = (int)cell.x; int cy = (int)cell.y;
+
+        grid[_tile.x, _tile.y] = null;
+        grid[cx, cy] = tile;
+        _tile.TweenTo(cx, cy, null);
     }
 
     public static void RemoveTileAt(Vector2 cell) {
         Destroy(grid[(int)cell.x, (int)cell.y]);
+        grid[(int)cell.x, (int)cell.y] = null;
         numTiles -= 1;
     }
 
     public static bool CellInBounds(Vector2 cell) {
-      return cell.x >= 0 && cell.x < size &&
-             cell.y >= 0 && cell.y < size;
+      return (int)cell.x >= 0 && (int)cell.x < size &&
+             (int)cell.y >= 0 && (int)cell.y < size;
     }
 
     public static bool PositionInBounds(Vector2 pos) {
-      return pos.x >= 0 && pos.x < size * tileSize &&
-             pos.y >= 0 && pos.y < size * tileSize;
+      return (int)pos.x >= 0 && (int)pos.x < size * tileSize &&
+             (int)pos.y >= 0 && (int)pos.y < size * tileSize;
     }
 
     public static bool ValidMove(Vector2 prev, Vector2 next) {
-        return ((next.x == prev.x - 1 || next.x == prev.x + 1) && next.y == prev.y) ||
-               ((next.y == prev.y - 1 || next.y == prev.y + 1) && next.x == prev.x);
+        int px = (int)prev.x; int py = (int)prev.y;
+        int nx = (int)next.x; int ny = (int)next.y;
+
+        return ((nx == px - 1 || nx == px + 1) && ny == py) ||
+               ((ny == py - 1 || ny == py + 1) && nx == px);
     }
 
     public static Vector2 GetFarthestPos(Vector2 cell) {
@@ -85,39 +91,40 @@ public class Board : MonoBehaviour {
     }
 
     public static void ReplaceMatchedTiles() {
-      // !!! TODO
+        int[] tweenY = new int[size];
 
-      // var x, y, cell, tile, pos, sY = [];
+        for (int x = 0; x < size; x++) {
+            tweenY[x] = 0;
 
-      // for (x = 0; x < this.size; x++) {
-      //   sY[x] = 0;
+            for (int y = size - 1; y >= 0; y--) { // reverse dir
+                Vector2 cell = new Vector2((float)x, (float)y);
+                GameObject tile = GetTileAtCell(cell);
 
-      //   for (y = this.size - 1; y >= 0; y--) { // reverse dir
-      //     cell = { x : x, y : y };
-      //     tile = this.gTAC(cell);
+                if (tile) {
+                    Vector2 pos = GetFarthestPos(cell);
+                    MoveTileTo(tile, pos);
+                } else {
+                    tweenY[x] += 1; // save tween pos
+                }
+            }
+        }
 
-      //     if (tile) {
-      //       pos = this.gFP(cell);
-      //       this.moveTileTo(tile, pos);
-      //     } else {
-      //       sY[x] += 1; // save tween pos
-      //     }
-      //   }
-      // }
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                Vector2 cell = new Vector2((float)x, (float)y);
+                GameObject tile = GetTileAtCell(cell);
 
-      // for (x = 0; x < this.size; x++) {
-      //   for (y = 0; y < this.size; y++) {
-      //     cell = { x : x, y : y };
-      //     tile = this.gTAC(cell);
-
-      //     if (!tile) {
-      //       this.cTA({ x : x, y : y, sY : -sY[x] });
-      //     }
-      //   }
-      // }
+                if (!tile) {
+                    CreateTileAt(x, y, -tweenY[x]);
+                }
+            }
+        }
     }
 
-    void Start () {
+    void Awake () {
+        // set reference to gameobject
+        board = gameObject;
+
         // set offset
         offsetY = (int)GetComponent<RectTransform>().anchoredPosition.y;
 

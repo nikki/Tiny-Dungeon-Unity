@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using DG.Tweening;
 
 public class Tile : MonoBehaviour {
 
@@ -24,7 +25,7 @@ public class Tile : MonoBehaviour {
     public AudioClip click;
     AudioSource audio;
 
-    public static GameObject Create(int x, int y, GameObject parent) {
+    public static GameObject Create(GameObject parent, int x, int y, int? tweenY = null) {
         // create a new tile
         GameObject tile = Instantiate(prefab) as GameObject;
         tile.transform.parent = parent.transform;
@@ -32,7 +33,7 @@ public class Tile : MonoBehaviour {
         // local scope reference to script component on tile
         Tile _tile = tile.GetComponent<Tile>();
 
-        // set position
+        // set base position
         _tile.SetPosition(x, y);
 
         // set spell type
@@ -40,6 +41,9 @@ public class Tile : MonoBehaviour {
 
         // set sprite
         _tile.SetSprite();
+
+        // tween y position
+        _tile.TweenTo(x, y, tweenY);
 
         // return tile game object
         return tile;
@@ -52,7 +56,7 @@ public class Tile : MonoBehaviour {
         this.y = y;
 
         // set onscreen position
-        rect.anchoredPosition = new Vector2((float)x * 128, (float)-y * 128);
+        rect.anchoredPosition3D = new Vector3((float)x * 128, (float)-y * 128, 0f);
         rect.localScale = Vector3.one;
     }
 
@@ -67,6 +71,22 @@ public class Tile : MonoBehaviour {
     public void SetSelected(bool select) {
         selected = select;
         rect.GetComponent<Image>().color = selected ? new Color32(255, 255, 255, 255) : new Color32(150, 150, 150, 200);
+    }
+
+    public void TweenTo(int x, int y, int? tweenY) {
+        // set new x/y
+        this.x = x;
+        this.y = y;
+
+        // calculate y position for newly created tiles ('dropped' from height)
+        if (tweenY is int && tweenY != 0) {
+            float newY = (float)(-y * 128) - (float)(tweenY * 128);
+            rect.anchoredPosition3D = new Vector3((float)x * 128, newY, 0f);
+        }
+
+        // tween to new pos
+        rect.DOAnchorPos3D(new Vector3((float)x * 128, (float)-y * 128, 0f), 0.5f, true).SetEase(Ease.InQuint);
+        rect.localScale = Vector3.one;
     }
 
     public void Awake() {
