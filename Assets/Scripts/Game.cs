@@ -101,7 +101,7 @@ public class Game : MonoBehaviour {
 
     void Start() {
         // set base dimensions and scale
-        baseDimensions = GameObject.Find("Canvas").GetComponent<CanvasScaler>().referenceResolution;
+        baseDimensions = GameObject.Find("Screens").GetComponent<CanvasScaler>().referenceResolution;
         scale = baseDimensions.x / Screen.width;
     }
 }

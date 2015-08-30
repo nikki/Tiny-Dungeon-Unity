@@ -7,11 +7,11 @@ public class Board : MonoBehaviour {
     public static GameObject board;
     public static int offsetY;
 
-    public static int size = 5;
+    public static int size = 7;
     public static GameObject[,] grid;
-    public static int numTiles = 0;
 
-    public static int tileSize = 128;
+    public static float tileSize = 91;
+    public static int numTiles = 0;
 
     public static void CreateGrid() {
         grid = new GameObject[size, size];

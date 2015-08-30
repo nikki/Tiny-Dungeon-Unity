@@ -5,6 +5,7 @@
 *.psd
 _assets/
 _old/
+Vendor/
 
 # =============== #
 # Unity generated #

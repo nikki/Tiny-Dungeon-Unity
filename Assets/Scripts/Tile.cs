@@ -10,6 +10,7 @@ public class Tile : MonoBehaviour {
 
     public int x;
     public int y;
+    public float size;
 
     public enum SpellType {
         Earth,
@@ -32,6 +33,9 @@ public class Tile : MonoBehaviour {
 
         // local scope reference to script component on tile
         Tile _tile = tile.GetComponent<Tile>();
+
+        // set size
+        _tile.SetSize();
 
         // set base position
         _tile.SetPosition(x, y);
@@ -56,8 +60,16 @@ public class Tile : MonoBehaviour {
         this.y = y;
 
         // set onscreen position
-        rect.anchoredPosition3D = new Vector3((float)x * 128, (float)-y * 128, 0f);
+        rect.anchoredPosition3D = new Vector3((float)x * size, (float)-y * size, 0f);
         rect.localScale = Vector3.one;
+    }
+
+    public void SetSize() {
+        // set size ref
+        size = Board.tileSize;
+
+        // set tile size
+        rect.sizeDelta = new Vector2(size, size);
     }
 
     public void SetType() {
@@ -80,12 +92,12 @@ public class Tile : MonoBehaviour {
 
         // calculate y position for newly created tiles ('dropped' from height)
         if (tweenY is int && tweenY != 0) {
-            float newY = (float)(-y * 128) - (float)(tweenY * 128);
-            rect.anchoredPosition3D = new Vector3((float)x * 128, newY, 0f);
+            float newY = (float)(-y * size) - (float)(tweenY * size);
+            rect.anchoredPosition3D = new Vector3((float)x * size, newY, 0f);
         }
 
         // tween to new pos
-        rect.DOAnchorPos3D(new Vector3((float)x * 128, (float)-y * 128, 0f), 0.5f, true).SetEase(Ease.InQuint);
+        rect.DOAnchorPos3D(new Vector3((float)x * size, (float)-y * size, 0f), 0.4f, true).SetEase(Ease.InOutExpo);
         rect.localScale = Vector3.one;
     }
 

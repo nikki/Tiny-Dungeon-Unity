@@ -33,6 +33,8 @@ public class Transitions : MonoBehaviour {
     }
 
     public void SlideIn(GameObject to) {
+        float width = Screen.width;
+
         // set enabled
         TogglePanels(gameObject, to);
 
@@ -42,10 +44,10 @@ public class Transitions : MonoBehaviour {
 
         // set initial position
         ShowPanel(to, true);
-        toRect.anchoredPosition = new Vector2((float)Screen.width * Game.scale, 0f);
+        toRect.anchoredPosition = new Vector2((float)width * Game.scale, 0f);
 
         // animate positions
-        fromRect.DOAnchorPos(new Vector2(-(float)Screen.width * Game.scale, 0f), 2f, true).SetEase(Ease.OutQuint);
+        fromRect.DOAnchorPos(new Vector2(-(float)width * Game.scale, 0f), 2f, true).SetEase(Ease.OutQuint);
         toRect.DOAnchorPos(new Vector2(0f, 0f), 2f, true).SetEase(Ease.OutQuint);
     }
 
@@ -69,7 +71,7 @@ public class Transitions : MonoBehaviour {
 
     public void GoBack(GameObject to) {
         // clear all tweens
-        DOTween.Clear();
+        DOTween.CompleteAll();
 
         // reset position
         to.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
