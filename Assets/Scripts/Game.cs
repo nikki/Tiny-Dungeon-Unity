@@ -76,8 +76,8 @@ public class Game : MonoBehaviour {
                 Board.RemoveTileAt(new Vector2(_tile.x, _tile.y));
             }
 
-            //   // cast the spell
-            //   dungeon.castSpell(this.chain.length);
+            // cast the spell
+            Player.instance.CastSpell(currentTile.GetComponent<Tile>().type, chain.Count);
 
             //   // currently fighting e?
             //   if (TM.wait) {

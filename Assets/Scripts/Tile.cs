@@ -3,6 +3,13 @@ using UnityEngine.UI;
 using System.Collections;
 using DG.Tweening;
 
+public enum SpellType {
+    Earth,
+    Water,
+    Air,
+    Fire
+}
+
 public class Tile : MonoBehaviour {
 
     public static Object prefab = Resources.Load("Prefabs/Tile");
@@ -12,12 +19,6 @@ public class Tile : MonoBehaviour {
     public int y;
     public float size;
 
-    public enum SpellType {
-        Earth,
-        Water,
-        Air,
-        Fire
-    }
     public SpellType type;
     public bool selected;
 
