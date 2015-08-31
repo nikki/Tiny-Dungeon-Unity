@@ -3,13 +3,6 @@ using UnityEngine.UI;
 using System.Collections;
 using DG.Tweening;
 
-public enum SpellType {
-    Earth,
-    Water,
-    Air,
-    Fire
-}
-
 public class Tile : MonoBehaviour {
 
     public static Object prefab = Resources.Load("Prefabs/Tile");
@@ -74,7 +67,8 @@ public class Tile : MonoBehaviour {
     }
 
     public void SetType() {
-        type = (SpellType)Random.Range(0, System.Enum.GetValues(typeof(SpellType)).Length);
+        type = Spell.instance.active[Random.Range(0, Spell.instance.active.Count)];
+        // type = (SpellType)Random.Range(0, System.Enum.GetValues(typeof(SpellType)).Length);
     }
 
     public void SetSprite() {

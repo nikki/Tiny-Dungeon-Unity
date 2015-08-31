@@ -5,8 +5,12 @@ public class Enemy : MonoBehaviour {
 
     public static Enemy instance { get; private set; }
 
-    int health = 10;
     SpellType weakness = SpellType.Fire;
+
+    bool isBoss = false;
+
+    int health = 1000;
+    bool dead = false;
 
     public void CastSpell() {
 
@@ -23,18 +27,22 @@ public class Enemy : MonoBehaviour {
             // kill
             Die();
         } else {
+            // instantiate spell effect prefab
+            Spell.instance.Hit((int)type);
+
             // play hit animation
-            Debug.Log(Random.Range(1, 3));
             GetComponent<Animation>().Play("hit" + multiplier);
         }
-
-        // back to idle again
-        // GetComponent<Animation>().Play("idle");
     }
 
     public void Die() {
+        if (dead) return;
+
         // death animation
         GetComponent<Animation>().Play("die");
+
+        // temp dead flag
+        dead = true;
 
         // destroy gameobject
     }
@@ -42,6 +50,15 @@ public class Enemy : MonoBehaviour {
     void Awake() {
         // singleton
         instance = this;
+
+        // play idle animation on awake
+        GetComponent<Animation>().Play("idle");
     }
 
+    void Update() {
+        // default to idle animation
+        if (!dead && !GetComponent<Animation>().isPlaying) {
+            GetComponent<Animation>().Play("idle");
+        }
+    }
 }

@@ -6,23 +6,10 @@ public class Player : MonoBehaviour {
     public static Player instance { get; private set; }
 
     public void CastSpell(SpellType type, int strength) {
-        switch (type) {
-            case SpellType.Earth:
+        // instantiate spell effect prefab
+        Spell.instance.Cast((int)type);
 
-                break;
-            case SpellType.Water:
-
-                break;
-            case SpellType.Air:
-
-                break;
-            case SpellType.Fire:
-
-                break;
-            default:
-                break;
-        }
-
+        // damage enemy
         Enemy.instance.TakeDamage(type, strength);
     }
 
@@ -34,5 +21,4 @@ public class Player : MonoBehaviour {
         // singleton
         instance = this;
     }
-
 }

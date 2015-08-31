@@ -8,8 +8,9 @@ public class Game : MonoBehaviour {
     public static Vector2 baseDimensions;
     public static float scale;
 
-    static GameObject currentTile;
     static List<GameObject> chain = new List<GameObject>();
+    public static bool isSuper = false;
+    static GameObject currentTile;
     static List<GameObject> previousTiles = new List<GameObject>();
 
     public void First() {
@@ -19,6 +20,7 @@ public class Game : MonoBehaviour {
             tile.GetComponent<Tile>().SetSelected(true);
             chain.Add(tile);
             currentTile = tile;
+            isSuper = false;
         }
     }
 
@@ -40,7 +42,7 @@ public class Game : MonoBehaviour {
                     if (chain.Contains(tile)) {
                         // made a square!
                         if (chain.Count > 3 && tile == chain[0]) {
-                            Debug.Log("ZOMG SQUARE!");
+                            isSuper = true;
                         }
 
                         // undo chain if previous tile
