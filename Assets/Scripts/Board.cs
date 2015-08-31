@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Board : MonoBehaviour {
 
@@ -88,6 +89,11 @@ public class Board : MonoBehaviour {
         } while (CellInBounds(cell) && !GetTileAtCell(cell));
 
         return prev;
+    }
+
+    public static List<GameObject> GetAllTilesOfType(SpellType type) {
+        GameObject[] chain = GameObject.FindGameObjectsWithTag(type.ToString() + "Tile");
+        return chain.ToList();
     }
 
     public static void ReplaceMatchedTiles() {

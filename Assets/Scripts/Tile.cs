@@ -69,6 +69,9 @@ public class Tile : MonoBehaviour {
     public void SetType() {
         type = Spell.instance.active[Random.Range(0, Spell.instance.active.Count)];
         // type = (SpellType)Random.Range(0, System.Enum.GetValues(typeof(SpellType)).Length);
+
+        // set tag
+        gameObject.tag = type.ToString() + "Tile";
     }
 
     public void SetSprite() {

@@ -40,6 +40,7 @@ public class Game : MonoBehaviour {
 
                     // is this a previous tile?
                     if (chain.Contains(tile)) {
+
                         // made a square!
                         if (chain.Count > 3 && tile == chain[0]) {
                             isSuper = true;
@@ -71,6 +72,14 @@ public class Game : MonoBehaviour {
     public void Last() {
         // 2+ tiles in chain
         if (chain.Count > 1) {
+
+            // made a square -> replace all tiles of type
+            if (isSuper) {
+                chain.Clear();
+                chain = Board.GetAllTilesOfType(currentTile.GetComponent<Tile>().type);
+                // Debug.Log(chain.Count);
+                // Blow up tiles, screenshake
+            }
 
             // remove tiles
             foreach(GameObject tile in chain) {

@@ -50,5 +50,6 @@ public class Spell : MonoBehaviour {
         active.Add(SpellType.Fire);
         active.Add(SpellType.Water);
         active.Add(SpellType.Nature);
+        // active.Add(SpellType.Arcane);
     }
 }
